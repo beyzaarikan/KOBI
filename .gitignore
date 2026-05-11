@@ -17,6 +17,7 @@ __pycache__/
 *$py.class
 backend/venv/
 backend/kobi_app.db
+backend/.env
 
 # Node.js / Frontend
 frontend/node_modules/
