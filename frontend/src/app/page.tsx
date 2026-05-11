@@ -75,10 +75,10 @@ export default function DashboardPage() {
         <header className="flex justify-between items-center pb-6 border-b border-neutral-800">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">Kobi.app</h1>
-            <p className="text-neutral-400 mt-1">AI-Powered Inventory & Order Management</p>
+            <p className="text-neutral-400 mt-1">Yapay Zeka Destekli Envanter ve Sipariş Yönetimi</p>
           </div>
           <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-            System Healthy
+            Sistem Sağlıklı
           </Badge>
         </header>
 
@@ -86,7 +86,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-neutral-900 border-neutral-800">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-neutral-400">Total Orders (Today)</CardTitle>
+              <CardTitle className="text-sm font-medium text-neutral-400">Toplam Sipariş (Bugün)</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{metrics?.total_orders_today || 0}</div>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
           </Card>
           <Card className="bg-neutral-900 border-neutral-800">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-neutral-400">Low Stock Alerts</CardTitle>
+              <CardTitle className="text-sm font-medium text-neutral-400">Düşük Stok Uyarıları</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-rose-500">{metrics?.low_stock_alerts || 0}</div>
@@ -102,7 +102,7 @@ export default function DashboardPage() {
           </Card>
           <Card className="bg-neutral-900 border-neutral-800">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-neutral-400">Delayed Shipments</CardTitle>
+              <CardTitle className="text-sm font-medium text-neutral-400">Geciken Teslimatlar</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-amber-500">{metrics?.delayed_shipments || 0}</div>
@@ -110,7 +110,7 @@ export default function DashboardPage() {
           </Card>
           <Card className="bg-neutral-900 border-neutral-800">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-neutral-400">Revenue (Today)</CardTitle>
+              <CardTitle className="text-sm font-medium text-neutral-400">Gelir (Bugün)</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-emerald-400">₺{metrics?.revenue_today || "0.00"}</div>
@@ -126,17 +126,17 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                Inventory Intelligence Engine
+                Envanter Zeka Motoru
               </CardTitle>
               <CardDescription className="text-neutral-400">
-                AI-driven predictions based on recent sales velocity.
+                Son satış hızına dayalı yapay zeka destekli tahminler.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
               <ScrollArea className="h-[400px] pr-4">
                 <div className="space-y-4">
                   {insights.length === 0 ? (
-                    <div className="text-neutral-500 text-sm">Analyzing inventory...</div>
+                    <div className="text-neutral-500 text-sm">Envanter analiz ediliyor...</div>
                   ) : (
                     insights.map((item, idx) => (
                       <div key={idx} className="p-4 rounded-lg bg-neutral-950 border border-neutral-800">
@@ -149,10 +149,10 @@ export default function DashboardPage() {
                         <p className="text-sm text-neutral-400 mb-3">{item.reason}</p>
                         <div className="flex gap-4 text-xs font-medium">
                           <div className="bg-neutral-800/50 px-2 py-1 rounded">
-                            <span className="text-neutral-500">Depletes in:</span> <span className="text-white">{item.predicted_depletion_days} days</span>
+                            <span className="text-neutral-500">Tükenme süresi:</span> <span className="text-white">{item.predicted_depletion_days} gün</span>
                           </div>
                           <div className="bg-indigo-500/10 px-2 py-1 rounded text-indigo-400">
-                            Restock: {item.restock_recommendation} units
+                            Yeniden Stokla: {item.restock_recommendation} adet
                           </div>
                         </div>
                       </div>
@@ -166,8 +166,8 @@ export default function DashboardPage() {
           {/* AI CUSTOMER SUPPORT CHAT */}
           <Card className="bg-neutral-900 border-neutral-800 flex flex-col h-[520px]">
             <CardHeader className="pb-3 border-b border-neutral-800">
-              <CardTitle className="text-lg">AI Support Agent</CardTitle>
-              <CardDescription className="text-neutral-400">Natural language order tracking</CardDescription>
+              <CardTitle className="text-lg">Yapay Zeka Destek Asistanı</CardTitle>
+              <CardDescription className="text-neutral-400">Doğal dil ile sipariş takibi</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col pt-4 overflow-hidden">
               <ScrollArea className="flex-1 pr-4 mb-4">
@@ -181,7 +181,7 @@ export default function DashboardPage() {
                   ))}
                   {chatLog.length === 0 && (
                     <p className="text-neutral-500 text-sm text-center mt-10">
-                      Ask about an order (e.g., &quot;Siparişim nerede?&quot;)
+                      Bir sipariş hakkında soru sorun (örn. &quot;Siparişim nerede?&quot;)
                     </p>
                   )}
                 </div>
@@ -191,11 +191,11 @@ export default function DashboardPage() {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleChat()}
-                  placeholder="Type a message..." 
+                  placeholder="Bir mesaj yazın..." 
                   className="bg-neutral-950 border-neutral-800"
                 />
                 <Button onClick={handleChat} className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                  Send
+                  Gönder
                 </Button>
               </div>
             </CardContent>
