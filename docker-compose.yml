@@ -1,15 +1,28 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=kobi_user
+      - POSTGRES_PASSWORD=kobi_password
+      - POSTGRES_DB=kobi_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   backend:
     build: ./backend
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=sqlite+aiosqlite:///./kobi_app.db
+      - DATABASE_URL=postgresql+asyncpg://kobi_user:kobi_password@db:5432/kobi_db
       - GEMINI_API_KEY=${GEMINI_API_KEY:-MOCK_KEY}
     volumes:
       - ./backend:/app
+    depends_on:
+      - db
 
   frontend:
     build: ./frontend
@@ -19,3 +32,6 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
       - backend
+
+volumes:
+  postgres_data:
