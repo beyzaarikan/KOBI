@@ -1,0 +1,35 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# General
+.env
+.env.*
+!.env.example
+*.pem
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+backend/venv/
+backend/kobi_app.db
+
+# Node.js / Frontend
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.js
+frontend/.yarn/install-state.gz
+frontend/coverage/
+frontend/.next/
+frontend/out/
+frontend/build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+frontend/.vercel/
+*.tsbuildinfo
+frontend/next-env.d.ts
