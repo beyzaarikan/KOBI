@@ -18,7 +18,6 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://kobi_user:kobi_password@db:5432/kobi_db
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-MOCK_KEY}
     volumes:
       - ./backend:/app
     depends_on:

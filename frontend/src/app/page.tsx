@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Mail, AlertCircle, TrendingUp } from "lucide-react";
 
 interface DashboardMetrics {
   total_orders_today: number;
@@ -23,16 +24,18 @@ interface DashboardMetrics {
 interface InventoryInsight {
   product_name: string;
   status: string;
-  reason: string;
-  predicted_depletion_days: number;
-  restock_recommendation: number;
+  critical_explanation: string;
+  order_recommendation: string;
+  supplier_email_draft: string;
 }
 
 export default function DashboardPage() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [insights, setInsights] = useState<InventoryInsight[]>([]);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(true);
   const [chatInput, setChatInput] = useState("");
   const [chatLog, setChatLog] = useState<{ role: string; content: string }[]>([]);
+  const [openEmailDraft, setOpenEmailDraft] = useState<number | null>(null);
 
   useEffect(() => {
     // Fetch metrics
@@ -44,8 +47,14 @@ export default function DashboardPage() {
     // Fetch AI insights
     fetch("http://localhost:8000/api/v1/inventory/ai/inventory-insights")
       .then((res) => res.json())
-      .then((data) => setInsights(data.insights))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        setInsights(data.insights || []);
+        setIsLoadingInsights(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoadingInsights(false);
+      });
   }, []);
 
   const handleChat = async () => {
@@ -135,8 +144,10 @@ export default function DashboardPage() {
             <CardContent className="flex-1">
               <ScrollArea className="h-[400px] pr-4">
                 <div className="space-y-4">
-                  {insights.length === 0 ? (
+                  {isLoadingInsights ? (
                     <div className="text-neutral-500 text-sm">Envanter analiz ediliyor...</div>
+                  ) : insights.length === 0 ? (
+                    <div className="text-neutral-500 text-sm">Tüm envanter sağlıklı durumda. Kritik uyarı bulunmuyor.</div>
                   ) : (
                     insights.map((item, idx) => (
                       <div key={idx} className="p-4 rounded-lg bg-neutral-950 border border-neutral-800">
@@ -146,14 +157,41 @@ export default function DashboardPage() {
                             {item.status}
                           </Badge>
                         </div>
-                        <p className="text-sm text-neutral-400 mb-3">{item.reason}</p>
-                        <div className="flex gap-4 text-xs font-medium">
-                          <div className="bg-neutral-800/50 px-2 py-1 rounded">
-                            <span className="text-neutral-500">Tükenme süresi:</span> <span className="text-white">{item.predicted_depletion_days} gün</span>
+                        <div className="space-y-3 mb-3">
+                          <div className="flex gap-2 text-sm text-neutral-300">
+                            <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                            <p>{item.critical_explanation}</p>
                           </div>
-                          <div className="bg-indigo-500/10 px-2 py-1 rounded text-indigo-400">
-                            Yeniden Stokla: {item.restock_recommendation} adet
+                          <div className="flex gap-2 text-sm text-neutral-300">
+                            <TrendingUp className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                            <p>{item.order_recommendation}</p>
                           </div>
+                        </div>
+                        
+                        <div className="mt-4 border-t border-neutral-800 pt-3">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 h-8 px-2"
+                            onClick={() => setOpenEmailDraft(openEmailDraft === idx ? null : idx)}
+                          >
+                            <Mail className="w-4 h-4 mr-2" />
+                            Tedarikçi Mail Taslağı
+                          </Button>
+                          
+                          {openEmailDraft === idx && (
+                            <div className="mt-2 p-3 bg-neutral-900 rounded border border-neutral-800 text-sm text-neutral-300 whitespace-pre-wrap font-mono relative">
+                              {item.supplier_email_draft}
+                              <Button 
+                                size="sm" 
+                                variant="secondary" 
+                                className="absolute top-2 right-2 h-6 text-xs bg-neutral-800 hover:bg-neutral-700"
+                                onClick={() => navigator.clipboard.writeText(item.supplier_email_draft)}
+                              >
+                                Kopyala
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))
