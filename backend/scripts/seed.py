@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from app.db.session import AsyncSessionLocal, engine, Base
 from app.models.models import User, Product, Inventory, Order, OrderItem, InventoryMovement, MovementType, OrderStatus, Shipment
 
+
 async def seed_data():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
