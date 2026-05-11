@@ -29,7 +29,7 @@ async def get_delayed_shipments(db: AsyncSession = Depends(get_db)):
         select(Shipment, Order)
         .join(Order, Shipment.order_id == Order.id)
         .where(Shipment.estimated_delivery < now)
-        .where(Shipment.status != "Delivered")
+        .where(Shipment.status.ilike("%delivered%") == False)
     )
 
     delayed_shipments = []
