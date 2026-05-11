@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1 import inventory, orders
+from app.api.v1 import inventory, orders, operations
 
 app = FastAPI(title="Kobi App API", version="0.1.0")
 
@@ -14,6 +14,7 @@ app.add_middleware(
 
 app.include_router(inventory.router, prefix="/api/v1/inventory", tags=["inventory"])
 app.include_router(orders.router, prefix="/api/v1/orders", tags=["orders"])
+app.include_router(operations.router, prefix="/api/v1/operations", tags=["operations"])
 
 # WebSocket Manager
 class ConnectionManager:
