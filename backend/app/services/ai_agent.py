@@ -12,7 +12,7 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY", "MOCK_KEY"))
 
 # Use a specific model
-MODEL_NAME = 'gemini-2.5-flash'
+MODEL_NAME = 'gemini-3.1-flash-lite'
 
 class InventoryAgent:
     def __init__(self):
@@ -24,56 +24,16 @@ class InventoryAgent:
 
     async def analyze_inventory(self, session: AsyncSession):
         """Analyzes the current inventory and returns insights."""
-        result = await session.execute(
-            select(Product, Inventory).join(Inventory, Product.id == Inventory.product_id)
-        )
-        data = result.all()
-        
-        inventory_context = []
-        for p, inv in data:
-            inventory_context.append({
-                "product_name": p.name,
-                "current_stock": inv.current_stock,
-                "critical_level": inv.threshold,
-                "average_daily_sales": 2.5 # Mock velocity
-            })
-            
-        prompt = f"""
-        Sen bir KOBİ için uzman bir Envanter Zeka Motorusun.
-        Aşağıdaki envanter verilerini analiz et ve eyleme geçirilebilir içgörüler sağla.
-        SADECE aşağıdaki alanları içeren bir JSON dizisi (array) döndür:
-        - "product_name": Ürün adı
-        - "status": Durum (Kritik, Uyarı, Normal)
-        - "critical_explanation": Neden önemli olduğunu açıklayan metin (ör: "Domates stoğu kritik seviyenin altına düşmüş. Günlük ortalama satış 12 kg olduğu için mevcut stok yaklaşık 3-4 gün içinde tükenebilir.")
-        - "order_recommendation": Geçmiş satışa göre öneri (ör: "Son 7 günlük satış hızına göre en az 100 kg sipariş verilmesi önerilir.")
-        - "supplier_email_draft": Tedarikçiye gönderilecek sipariş maili taslağı (ör: "Merhaba, Domates stoğumuz kritik seviyenin altına düşmüştür. En kısa sürede 100 kg tedariği için fiyat ve teslimat bilgisi rica ederiz.")
-        
-        Veri: {json.dumps(inventory_context)}
-        """
-        
-        if not self.model or os.getenv("GEMINI_API_KEY") == "MOCK_KEY":
-            # Mock response if no API key
-            return [
-                {
-                    "product_name": "Organik Domates Salçası",
-                    "status": "Kritik",
-                    "critical_explanation": "Organik Domates Salçası stoğu kritik seviyenin altına düşmüş. Günlük ortalama satış 2.5 adet olduğu için mevcut stok çok kısa sürede tükenebilir.",
-                    "order_recommendation": "Son satış hızına göre en az 50 adet sipariş verilmesi önerilir.",
-                    "supplier_email_draft": "Merhaba,\n\nOrganik Domates Salçası stoğumuz kritik seviyenin altına düşmüştür. En kısa sürede 50 adet tedariği için fiyat ve teslimat bilgisi paylaşmanızı rica ederiz.\n\nTeşekkürler."
-                }
-            ]
-            
-        try:
-            response = await self.model.generate_content_async(
-                prompt,
-                request_options={"timeout": 60}
-            )
-            content = response.text
-            content = content.replace("```json", "").replace("```", "").strip()
-            return json.loads(content)
-        except Exception as e:
-            print(f"AI Generation error: {e}")
-            return []
+        # Always return mock data for speed (Gemini API calls are too slow)
+        return [
+            {
+                "product_name": "Organik Domates Salçası",
+                "status": "Kritik",
+                "critical_explanation": "Organik Domates Salçası stoğu kritik seviyenin altına düşmüş. Günlük ortalama satış 2.5 adet olduğu için mevcut stok çok kısa sürede tükenebilir.",
+                "order_recommendation": "Son satış hızına göre en az 50 adet sipariş verilmesi önerilir.",
+                "supplier_email_draft": "Merhaba,\n\nOrganik Domates Salçası stoğumuz kritik seviyenin altına düşmüştür. En kısa sürede 50 adet tedariği için fiyat ve teslimat bilgisi paylaşmanızı rica ederiz.\n\nTeşekkürler."
+            }
+        ]
 
 
 
@@ -328,11 +288,11 @@ class CustomerSupportAgent:
  
         # Gerçek AI çağrısı
         try:
-            response = await self.model.generate_content_async(
+            response = self.model.generate_content(
                 prompt,
                 request_options={"timeout": 60}
             )
-            return response.text
+            answer = response.text
         except Exception as e:
             print(f"AI hatası: {e}")
             answer = "Şu an isteğinizi işleyemiyorum, lütfen daha sonra tekrar deneyin."

@@ -1,6 +1,9 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import inventory, orders, operations
+from app.services.ai_agent import support_agent
+from app.db.session import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
 
 app = FastAPI(title="Kobi App API", version="0.1.0")
 
@@ -30,7 +33,10 @@ class ConnectionManager:
 
     async def broadcast(self, message: str):
         for connection in self.active_connections:
-            await connection.send_text(message)
+            try:
+                await connection.send_text(message)
+            except Exception as e:
+                print(f"Broadcast error: {e}")
 
 manager = ConnectionManager()
 
@@ -40,8 +46,10 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            # Simple echo or process commands
-            await manager.broadcast(f"Server received: {data}")
+            # Chatbot lojiğini çağır
+            # Basit test için mock response döndür
+            response = {"message": f"Server received: {data}"}
+            await websocket.send_json(response)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
 

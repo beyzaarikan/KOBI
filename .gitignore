@@ -18,7 +18,6 @@ __pycache__/
 backend/venv/
 backend/kobi_app.db
 backend/.env
-
 # Node.js / Frontend
 frontend/node_modules/
 frontend/.pnp
@@ -34,3 +33,8 @@ yarn-error.log*
 frontend/.vercel/
 *.tsbuildinfo
 frontend/next-env.d.ts
+backend/app/__pycache__/main.cpython-312.pyc
+backend/app/api/v1/__pycache__/inventory.cpython-312.pyc
+backend/app/api/v1/__pycache__/orders.cpython-312.pyc
+backend/app/schemas/__pycache__/schemas.cpython-312.pyc
+backend/app/services/__pycache__/ai_agent.cpython-312.pyc
